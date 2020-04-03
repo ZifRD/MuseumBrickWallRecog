@@ -1,2 +1,2 @@
 # MuseumBrickWallRecog
-Wall brick puzzle recognition for Murmansk Branch of Russian Museum
+Brick wall puzzle recognition for Murmansk Branch of Russian Museum
