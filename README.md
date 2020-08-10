@@ -12,25 +12,19 @@
 
 Рассматриваются 2 варината: (1) идентификация всего собранного изображения как эталонного (модель VGG), (2) идентиикация каждого из 20 фрагментов в отдельности (модель YoLo, экспериментальное исследование проводит Всеволод Колоколов, Мурм. аркт. гос. ун-т).
 
-Далее по варианту с VGG. Реализованы два варианта порождения обучающей выборки и тестов. Первый: генерируются 40% absolutely random assemblies of 20 out of 4*6*20 parts (4 - rotation is considered) to train model answer as False and 60 % random selected (1 out of 6 each time) entire original images (for True). It has come to huge False Positive.
+Далее по варианту с VGG. Реализованы два варианта порождения обучающей выборки и тестов. 
 
-The second version. 50 % for True (random original images)  and 50% for False, but no absolutely random assemblies, instead the following procedure applied:
+Первый: генерируются 40% соверешенно случайных пазлов (каждый пазл - это 20 упорядоченных фрагментов из 4*6*20 возможных (4 - кол-во вариантов поворота грани в одной плоскости) класса "нет" и 60% случайно выбранных (1 из 6) эталонных изображений класса "да". По итогам были получены высокие False Positive.
 
-1)      original image selected randomly (acceptor),
+Второй: 50% для класса "да" (случайно выбранные эталоны) и 50% класса "нет", но полностью случайные варианты исключены. Алгоритм генерации для "нет":
 
-2)      3 blocks positions (out of 20 total) are selected to be modified in acceptor,
+1. Случайно выбирается эталон (акцептор).
+2. Случайно выбираются 3 различные позиции фрагменов (в решётке 5 на 4) для модификации в акцепторе.
+3. Случайно выбираются углы поворота независимо для каждой позиции из пред. пункта (4 варианта, то есть 0, 90, 180, 270).
+4. Случайно выбираются 3 эталонных изображения (из 6) и 3 позиции фрагментов в них (это доноры, повторы возможны).
+5. К каждому фрагменты донора применяется соответствующий поворот, после чего фрагмент занимает соответствующую позицию в акцепторе (с учётом порядка). 
 
-3)      3 random rotation angles selected (out of 4 variants, i.e. 0,90, 180, 270 , zero is permitted),
-
-4)      3 donor original images and its blocks (bricks) are randomly selected,
-
-5)      rotation is applied to each donor block and assembled in selected positions in acceptor image (it has been guaranteed to be 17 blocks of original image and not more than 3 erratic bricks). Code permits to use acceptor as donor either.
-
-The second training generator shows increased quality, but some False Positive are found (some correction still needed).  
-
-There are functions of training set generation, model construction and loss calculation in attached file.
-
-My main question is whether it appropriate to use 50 % of training set repeated multiple times 6 original images as True and 50 % cases with low variability (as 1-3 out of 20 original parts) as False. Or is it possible to improve model by changing of output and/or loss function?
+Таким образом, второй варинт гарантирует 17 правильно выставленных фрагментов и не более 3 ошибочных (акцептор сам моет быть донором). По итогам второго варианта удалось существенно понизить False Positive.
 
 В обоих случаях использовалась следующая функция потерь и структура сети:
 
