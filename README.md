@@ -38,12 +38,12 @@ You can use these html tags for this,
 
 <table>
   <tr>
-    <td> <img src="Figure 7. ACFs.tif"  alt="1" width = 360px height = 640px ></td>
-    <td><img src="Figure 7. ACFs.tif" alt="2" width = 360px height = 640px></td>
+    <td> <img src="Figure 6. Additive model periods.png"  alt="1" width = 360px height = 640px ></td>
+    <td><img src="Figure 6. Additive model periods.png" alt="2" width = 360px height = 640px></td>
    </tr> 
    <tr>
-      <td><img src="Figure 7. ACFs.tif" alt="3" width = 360px height = 640px></td>
-      <td><img src="Figure 7. ACFs.tif" alt="4" width = 360px height = 640px></td>
+      <td><img src="Figure 6. Additive model periods.png" alt="3" width = 360px height = 640px></td>
+      <td><img src="Figure 6. Additive model periods.png" alt="4" width = 360px height = 640px></td>
   </tr>
 </table>
 
