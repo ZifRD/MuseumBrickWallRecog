@@ -31,3 +31,22 @@ The second training generator shows increased quality, but some False Positive a
 There are functions of training set generation, model construction and loss calculation in attached file.
 
 My main question is whether it appropriate to use 50 % of training set repeated multiple times 6 original images as True and 50 % cases with low variability (as 1-3 out of 20 original parts) as False. Or is it possible to improve model by changing of output and/or loss function?
+
+
+
+You can use these html tags for this,
+
+<table>
+  <tr>
+    <td> <img src="img1.png"  alt="1" width = 360px height = 640px ></td>
+
+    <td><img src="img2.png" alt="2" width = 360px height = 640px></td>
+   </tr> 
+   <tr>
+      <td><img src="./Scshot/cab_arrived.png" alt="3" width = 360px height = 640px></td>
+
+      <td><img src="./Scshot/trip_end.png" align="right" alt="4" width = 360px height = 640px>
+  </td>
+  </tr>
+</table>
+
