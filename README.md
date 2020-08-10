@@ -8,11 +8,11 @@
 
 Каковы варианты собрать картину неверно: (1) повернуть хотя бы один куб так, чтобы грань в плоскости собираемой картины (эталона) оказалась частью другой картины; (2) хотя бы одну грань, присутствующую как фрагмент в эталоне, поместить на неверную позицию в решётке 5 на 4 фрагментов эталона; (3) повернуть хотя бы одну грань, верно выбранный фрагмент эталона, в плоскости эталона на 90, 180, 270 градусов относительно позиции в нём и т.д
 
-ings appeared. Model will answer whether original image assembled and its number (out of 6) if true. Model will be supplied with images from phone camera, shots of brick wall. For experiments  I use 40 by 40 pixel parts for brick faces (200 by 160 pixels total for each image assembly).
+Для удобства дальнейшего решения предполагается, что нет дефектов выставления кубов (зазоров, несовпадение плоскости одной из граней с плоскостью всей картины и т.д.). В экспериментах использованы 6 изображений (200 на 160 пикселов) той же тематики и стиля исполнения, что и 3D-мозаика в музее. Каждый фрагмент имеет размеры 40 на 40 пикселов. 
 
-Для удобства дальнейшего решения предполагается, что нет дефектов выставления кубов (зазоров, несовпадение плоскости одной из граней с плоскостью всей картины и т.д.). 
+Рассматриваются 2 варината: (1) идентификация всего собранного изображения как эталонного (модель VGG), (2) идентиикация каждого из 20 фрагментов в отдельности (модель YoLo, экспериментальное исследование проводит Всеволод Колоколов, Мурм. аркт. гос. ун-т).
 
-The first attempt was to generate 40% absolutely random assemblies of 20 out of 4*6*20 parts (4 - rotation is considered) to train model answer as False and 60 % random selected (1 out of 6 each time) entire original images (for True). It has come to huge False Positive.
+Далее по варианту с VGG. Реализованы два варианта порождения обучающей выборки и тестов. Первый: генерируются 40% absolutely random assemblies of 20 out of 4*6*20 parts (4 - rotation is considered) to train model answer as False and 60 % random selected (1 out of 6 each time) entire original images (for True). It has come to huge False Positive.
 
 The second version. 50 % for True (random original images)  and 50% for False, but no absolutely random assemblies, instead the following procedure applied:
 
@@ -32,9 +32,37 @@ There are functions of training set generation, model construction and loss calc
 
 My main question is whether it appropriate to use 50 % of training set repeated multiple times 6 original images as True and 50 % cases with low variability (as 1-3 out of 20 original parts) as False. Or is it possible to improve model by changing of output and/or loss function?
 
+В обоих случаях использовалась следующая функция потерь и структура сети:
 
+```python
+from tensorflow.keras.layers import Flatten, Dense, Concatenate
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam, SGD
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.vgg16 import preprocess_input
+from tensorflow.keras.losses import binary_crossentropy, categorical_crossentropy
 
-You can use these html tags for this,
+def custom_loss(y_true, y_pred):
+  # target is a 7-tuple
+  # (fox,dck,bay,chu,alx,mrm, object_appeared)
+
+  cce = categorical_crossentropy(y_true[:, :-1], y_pred[:, :-1]) # object class
+  bce = binary_crossentropy(y_true[:, -1], y_pred[:, -1]) # object appeared
+  return cce * y_true[:, -1] + 0.5 * bce
+
+def make_model():
+  vgg = tf.keras.applications.VGG16(
+    input_shape=[H, W, 3],
+    include_top=False,
+    weights='imagenet')
+  x = Flatten()(vgg.output)
+  x0 = Dense(6, activation='softmax')(x) # object class
+  x1 = Dense(1, activation='sigmoid')(x) # object appeared
+  x = Concatenate()([x0, x1])
+  model = Model(vgg.input, x)
+  model.compile(loss=custom_loss, optimizer=Adam(lr=0.0001))
+  return model
+```
 
 
 
